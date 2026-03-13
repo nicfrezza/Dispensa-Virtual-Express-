@@ -26,6 +26,7 @@
 
 ## 📁 Estrutura do Projeto
 
+```
 └── frontend
     ├── README.md
     ├── eslint.config.js
@@ -93,4 +94,4 @@
     ├── tsconfig.json
     ├── tsconfig.node.json
     └── vite.config.ts
-
+```
