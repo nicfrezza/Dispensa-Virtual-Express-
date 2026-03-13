@@ -7,8 +7,6 @@
 
 > Plataforma de e-commerce para compra de alimentos ou produtos de limpeza. Com foco no consumidor que seja comprar o alimento e também á quem deseja vender seus produtos. 
 
-**Live demo:** [link]
-
 ## 🚀 Funcionalidades
 - 🔐 Login e registro com email/senha
 - 🍔 Compra de produtos
