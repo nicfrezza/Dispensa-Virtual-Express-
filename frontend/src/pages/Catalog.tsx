@@ -2,17 +2,9 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Filter, SlidersHorizontal } from 'lucide-react';
-import ProductCard from '../components/Productcard.tsx';
+import ProductCard from '../components/Productcard';
 import { productService } from '../services/productService';
-
-const categories = [
-    { id: 'all', name: 'Todos' },
-    { id: 'graos', name: 'Grãos' },
-    { id: 'laticinios', name: 'Laticínios' },
-    { id: 'bebidas', name: 'Bebidas' },
-    { id: 'snacks', name: 'Snacks' },
-    { id: 'condimentos', name: 'Condimentos' },
-];
+import { categoryService } from '../services/categoryService';
 
 const sortOptions = [
     { value: 'relevance', label: 'Relevância' },
@@ -29,123 +21,34 @@ export default function Catalog() {
     const selectedSort = searchParams.get('ordenar') || 'relevance';
     const searchQuery = searchParams.get('busca') || '';
 
-    // Mock de produtos para teste
-    const { data: products, isLoading } = useQuery({
-        queryKey: ['products', selectedCategory, selectedSort, searchQuery],
-        queryFn: async () => {
-            // Simulando delay de API
-            await new Promise(resolve => setTimeout(resolve, 500));
+    // Buscar categorias do JSON
+    const { data: categories, isLoading: loadingCategories } = useQuery({
+        queryKey: ['categories'],
+        queryFn: categoryService.getAll,
+    });
 
-            const allProducts = [
-                {
-                    id: '1',
-                    name: 'Arroz Integral Tipo 1 - 5kg',
-                    description: 'Arroz integral de alta qualidade',
-                    price: 28.90,
-                    comparePrice: 32.90,
-                    images: ['https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400'],
-                    stock: 50,
-                    category: { id: 'graos', name: 'Grãos' },
-                },
-                {
-                    id: '2',
-                    name: 'Café em Grãos Especial - 1kg',
-                    description: 'Café 100% arábica',
-                    price: 45.90,
-                    comparePrice: 54.90,
-                    images: ['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400'],
-                    stock: 30,
-                    category: { id: 'bebidas', name: 'Bebidas' },
-                },
-                {
-                    id: '3',
-                    name: 'Azeite de Oliva Extra Virgem - 500ml',
-                    description: 'Azeite importado',
-                    price: 32.50,
-                    images: ['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400'],
-                    stock: 20,
-                    category: { id: 'condimentos', name: 'Condimentos' },
-                },
-                {
-                    id: '4',
-                    name: 'Mel Orgânico - 300g',
-                    description: 'Mel puro de flores silvestres',
-                    price: 24.90,
-                    comparePrice: 29.90,
-                    images: ['https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400'],
-                    stock: 15,
-                    category: { id: 'doces', name: 'Doces' },
-                },
-                {
-                    id: '5',
-                    name: 'Feijão Carioca - 1kg',
-                    description: 'Feijão selecionado',
-                    price: 8.90,
-                    images: ['https://images.unsplash.com/photo-1559302504-64aae6ca6b6d?w=400'],
-                    stock: 100,
-                    category: { id: 'graos', name: 'Grãos' },
-                },
-                {
-                    id: '6',
-                    name: 'Leite Integral UHT - 1L',
-                    description: 'Leite longa vida',
-                    price: 4.99,
-                    comparePrice: 6.50,
-                    images: ['https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400'],
-                    stock: 200,
-                    category: { id: 'laticinios', name: 'Laticínios' },
-                },
-                {
-                    id: '7',
-                    name: 'Pão de Forma Integral - 500g',
-                    description: 'Pão sem conservantes',
-                    price: 6.90,
-                    images: ['https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400'],
-                    stock: 40,
-                    category: { id: 'padaria', name: 'Padaria' },
-                },
-                {
-                    id: '8',
-                    name: 'Chocolate Amargo 70% - 100g',
-                    description: 'Cacau selecionado',
-                    price: 12.90,
-                    comparePrice: 15.90,
-                    images: ['https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=400'],
-                    stock: 60,
-                    category: { id: 'doces', name: 'Doces' },
-                },
-            ];
+    // Buscar produtos do JSON
+    const { data: products, isLoading: loadingProducts } = useQuery({
+        queryKey: ['products', selectedCategory, searchQuery],
+        queryFn: () =>
+            productService.getAll({
+                category: selectedCategory === 'all' ? undefined : selectedCategory,
+                search: searchQuery || undefined,
+            }),
+    });
 
-            let filtered = allProducts;
-
-            // Filtrar por categoria
-            if (selectedCategory !== 'all') {
-                filtered = filtered.filter(p => p.category.id === selectedCategory);
-            }
-
-            // Filtrar por busca
-            if (searchQuery) {
-                filtered = filtered.filter(p =>
-                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    p.description.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
-
-            // Ordenar
-            switch (selectedSort) {
-                case 'price-asc':
-                    filtered.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price-desc':
-                    filtered.sort((a, b) => b.price - a.price);
-                    break;
-                case 'name':
-                    filtered.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-            }
-
-            return filtered;
-        },
+    // Ordenar produtos
+    const sortedProducts = [...(products || [])].sort((a, b) => {
+        switch (selectedSort) {
+            case 'price-asc':
+                return a.price - b.price;
+            case 'price-desc':
+                return b.price - a.price;
+            case 'name':
+                return a.name.localeCompare(b.name);
+            default:
+                return 0;
+        }
     });
 
     const handleCategoryChange = (categoryId: string) => {
@@ -164,6 +67,8 @@ export default function Catalog() {
         setSearchParams(newParams);
     };
 
+    const isLoading = loadingCategories || loadingProducts;
+
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar de Filtros */}
@@ -178,37 +83,30 @@ export default function Catalog() {
                     <div className="mb-6">
                         <h4 className="font-medium mb-3">Categorias</h4>
                         <div className="space-y-2">
-                            {categories.map((cat) => (
+                            <button
+                                onClick={() => handleCategoryChange('all')}
+                                className={`block w-full text-left px-3 py-2 rounded-lg transition ${selectedCategory === 'all'
+                                    ? 'bg-primary text-white'
+                                    : 'hover:bg-gray-100 text-gray-700'
+                                    }`}
+                            >
+                                Todas
+                            </button>
+                            {categories?.map((cat) => (
                                 <button
                                     key={cat.id}
-                                    onClick={() => handleCategoryChange(cat.id)}
-                                    className={`block w-full text-left px-3 py-2 rounded-lg transition ${selectedCategory === cat.id
+                                    onClick={() => handleCategoryChange(cat.slug)}
+                                    className={`block w-full text-left px-3 py-2 rounded-lg transition flex justify-between items-center ${selectedCategory === cat.slug
                                         ? 'bg-primary text-white'
                                         : 'hover:bg-gray-100 text-gray-700'
                                         }`}
                                 >
-                                    {cat.name}
+                                    <span>{cat.name}</span>
+                                    <span className={`text-xs ${selectedCategory === cat.slug ? 'text-white/70' : 'text-gray-400'}`}>
+                                        {cat.count}
+                                    </span>
                                 </button>
                             ))}
-                        </div>
-                    </div>
-
-                    {/* Faixa de Preço */}
-                    <div>
-                        <h4 className="font-medium mb-3">Preço</h4>
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="rounded text-primary" />
-                                <span className="text-sm">Até R$ 20</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="rounded text-primary" />
-                                <span className="text-sm">R$ 20 - R$ 50</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="rounded text-primary" />
-                                <span className="text-sm">Acima de R$ 50</span>
-                            </label>
                         </div>
                     </div>
                 </div>
@@ -216,15 +114,16 @@ export default function Catalog() {
 
             {/* Conteúdo Principal */}
             <main className="flex-1">
-                {/* Header do Catálogo */}
+                {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-dark">
-                            {selectedCategory === 'all' ? 'Todos os Produtos' :
-                                categories.find(c => c.id === selectedCategory)?.name}
+                            {selectedCategory === 'all'
+                                ? 'Todos os Produtos'
+                                : categories?.find((c) => c.slug === selectedCategory)?.name || 'Categoria'}
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">
-                            {products?.length || 0} produtos encontrados
+                            {sortedProducts.length} produtos encontrados
                         </p>
                     </div>
 
@@ -258,13 +157,13 @@ export default function Catalog() {
                             <div key={i} className="h-80 bg-gray-200 animate-pulse rounded-xl" />
                         ))}
                     </div>
-                ) : products?.length === 0 ? (
+                ) : sortedProducts.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-500">Nenhum produto encontrado</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        {products?.map((product) => (
+                        {sortedProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
                     </div>
