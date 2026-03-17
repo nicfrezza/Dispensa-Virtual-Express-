@@ -1,10 +1,18 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User, Search, Menu } from 'lucide-react';
-import { useCartStore } from '../stores/cartStore.ts';
+import { useQuery } from '@tanstack/react-query';
+import { ShoppingCart, User, Search } from 'lucide-react';
+import { useCartStore } from '../stores/cartStore';
+import { categoryService } from '../services/categoryService';
 
 export default function Header() {
     const { items } = useCartStore();
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    // Buscar categorias do JSON
+    const { data: categories } = useQuery({
+        queryKey: ['header-categories'],
+        queryFn: categoryService.getAll,
+    });
 
     return (
         <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -42,19 +50,26 @@ export default function Header() {
                                 </span>
                             )}
                         </Link>
-                        <Link to="/login" className="p-2 hover:bg-gray-100 rounded-full">
+                        <Link to="/perfil" className="p-2 hover:bg-gray-100 rounded-full">
                             <User className="w-6 h-6 text-dark" />
                         </Link>
                     </div>
                 </div>
 
-                {/* Navegação */}
+                {/* Navegação - Categorias do JSON */}
                 <nav className="flex gap-6 mt-4 text-sm font-medium text-gray-600 overflow-x-auto">
-                    <Link to="/catalogo" className="hover:text-primary whitespace-nowrap">Todos</Link>
-                    <Link to="/catalogo?categoria=graos" className="hover:text-primary whitespace-nowrap">Grãos</Link>
-                    <Link to="/catalogo?categoria=laticinios" className="hover:text-primary whitespace-nowrap">Laticínios</Link>
-                    <Link to="/catalogo?categoria=beverages" className="hover:text-primary whitespace-nowrap">Bebidas</Link>
-                    <Link to="/catalogo?categoria=snacks" className="hover:text-primary whitespace-nowrap">Snacks</Link>
+                    <Link to="/catalogo" className="hover:text-primary whitespace-nowrap">
+                        Todos
+                    </Link>
+                    {categories?.slice(0, 6).map((cat) => (
+                        <Link
+                            key={cat.id}
+                            to={`/catalogo?categoria=${cat.slug}`}
+                            className="hover:text-primary whitespace-nowrap"
+                        >
+                            {cat.name}
+                        </Link>
+                    ))}
                 </nav>
             </div>
         </header>

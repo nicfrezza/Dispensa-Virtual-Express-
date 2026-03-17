@@ -1,4 +1,3 @@
-import React from 'react';
 
 interface FooterLink {
     label: string;
@@ -17,7 +16,7 @@ const Footer: React.FC = () => {
         {
             title: "Produto",
             links: [
-                { label: "Funcionalidades", href: "#" },
+                { label: "Funcionalidades", href: "/funcionalidade" },
                 { label: "Preços", href: "#" },
                 { label: "Guia", href: "#" },
             ],
@@ -33,8 +32,8 @@ const Footer: React.FC = () => {
         {
             title: "Legal",
             links: [
-                { label: "Privacidade", href: "#" },
-                { label: "Termos", href: "#" },
+                { label: "Privacidade", href: "/privacidade" },
+                { label: "Termos", href: "/termos" },
             ],
         },
     ];
@@ -45,7 +44,7 @@ const Footer: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {/* Logo / Sobre */}
                     <div className="col-span-2 md:col-span-1">
-                        <span className="text-xl font-bold text-blue-600">Logo</span>
+                        <span className="text-xl font-bold text-blue-600">🥬</span>
                         <p className="mt-4 text-sm text-slate-600">
                             Soluções inteligentes para o seu dia a dia.
                         </p>
@@ -75,7 +74,7 @@ const Footer: React.FC = () => {
 
                 <div className="mt-12 pt-8 border-t border-slate-200 text-center">
                     <p className="text-sm text-slate-500">
-                        &copy; {currentYear} Nome da Sua Empresa. Todos os direitos reservados.
+                        &copy; {currentYear} Dispensa Express. Todos os direitos reservados.
                     </p>
                 </div>
             </div>

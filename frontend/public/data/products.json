@@ -1,0 +1,172 @@
+{
+  "products": [
+    {
+      "id": "7891000053504",
+      "name": "Arroz Parboilizado Tipo 1",
+      "category": "Grãos",
+      "price": 24.90,
+      "stock": 50,
+      "image": "https://m.media-amazon.com/images/I/81Prxd1w6dL.jpg",
+      "description": "Arroz tipo 1, grãos longos e finos, ideal para o dia a dia",
+      "brand": "Tio João",
+      "comparePrice": 29.90,
+      "nutriscore": "A",
+      "ecoscore": "B",
+      "nutrition": {
+        "calories": 130,
+        "protein": 2.7,
+        "carbs": 28,
+        "fat": 0.3,
+        "fiber": 0.4
+      },
+      "isFeatured": true
+    },
+    {
+      "id": "7891000053511",
+      "name": "Feijão Carioca Tipo 1",
+      "category": "Grãos",
+      "price": 8.90,
+      "stock": 100,
+      "image": "https://m.media-amazon.com/images/I/81J59dmdaCL.jpg",
+      "description": "Feijão carioca selecionado, fonte de proteínas e ferro",
+      "brand": "Camil",
+      "comparePrice": 10.50,
+      "nutriscore": "A",
+      "ecoscore": "A",
+      "nutrition": {
+        "calories": 77,
+        "protein": 4.5,
+        "carbs": 14,
+        "fat": 0.5,
+        "fiber": 6.4
+      },
+      "isFeatured": true
+    },
+    {
+      "id": "7891000053528",
+      "name": "Café em Pó Tradicional",
+      "category": "Bebidas",
+      "price": 15.90,
+      "stock": 80,
+      "image": "https://prezunic.vtexassets.com/arquivos/ids/179519-800-auto?v=638368809965270000&width=800&height=auto&aspect=true",
+      "description": "Café 100% arábica, torra média, aroma intenso",
+      "brand": "Pilão",
+      "comparePrice": 18.90,
+      "nutriscore": "B",
+      "ecoscore": "C",
+      "nutrition": {
+        "calories": 2,
+        "protein": 0.1,
+        "carbs": 0.3,
+        "fat": 0,
+        "fiber": 0
+      },
+      "isFeatured": true
+    },
+    {
+      "id": "7891000053535",
+      "name": "Azeite de Oliva Extra Virgem",
+      "category": "Condimentos",
+      "price": 32.50,
+      "stock": 30,
+      "image": "https://emporioquatroestrelas.vteximg.com.br/arquivos/ids/235665-1000-1000/Azeite-de-Oliva-Extra-Virgem-500ml-Gallo-ProImagem-17208.jpg?v=638942354421370000",
+      "description": "Azeite extra virgem, prensado a frio, origem Portugal",
+      "brand": "Gallo",
+      "comparePrice": 39.90,
+      "nutriscore": "C",
+      "ecoscore": "B",
+      "nutrition": {
+        "calories": 884,
+        "protein": 0,
+        "carbs": 0,
+        "fat": 100,
+        "fiber": 0
+      },
+      "isFeatured": true
+    },
+    {
+      "id": "7891000053542",
+      "name": "Leite Integral UHT",
+      "category": "Laticínios",
+      "price": 4.99,
+      "stock": 200,
+      "image": "https://mercantilnovaera.vtexassets.com/arquivos/ids/217472-800-450?v=638542478816370000&width=800&height=450&aspect=true",
+      "description": "Leite integral, fonte de cálcio e vitaminas",
+      "brand": "Italac",
+      "comparePrice": 5.99,
+      "nutriscore": "B",
+      "ecoscore": "B",
+      "nutrition": {
+        "calories": 64,
+        "protein": 3.2,
+        "carbs": 4.8,
+        "fat": 3.6,
+        "fiber": 0
+      },
+      "isFeatured": false
+    },
+    {
+      "id": "7891000053559",
+      "name": "Pão de Forma Integral",
+      "category": "Padaria",
+      "price": 6.90,
+      "stock": 40,
+      "image": "https://zaffari.vtexassets.com/arquivos/ids/298967/1036733-00.jpg?v=639017617009000000",
+      "description": "Pão integral sem conservantes, fonte de fibras",
+      "brand": "Pullman",
+      "comparePrice": 8.50,
+      "nutriscore": "A",
+      "ecoscore": "B",
+      "nutrition": {
+        "calories": 247,
+        "protein": 8.5,
+        "carbs": 41,
+        "fat": 3.4,
+        "fiber": 6
+      },
+      "isFeatured": false
+    },
+    {
+      "id": "7891000053566",
+      "name": "Mel Orgânico",
+      "category": "Doces",
+      "price": 24.90,
+      "stock": 25,
+      "image": "https://images.tcdn.com.br/img/img_prod/761170/mel_organico_angico_apis_flora_240g_609_1_20200710145838.jpg",
+      "description": "Mel puro de flores silvestres, orgânico certificado",
+      "brand": "Apis Flora",
+      "comparePrice": 29.90,
+      "nutriscore": "C",
+      "ecoscore": "A",
+      "nutrition": {
+        "calories": 304,
+        "protein": 0.3,
+        "carbs": 82,
+        "fat": 0,
+        "fiber": 0.2
+      },
+      "isFeatured": true
+    },
+    {
+      "id": "7891000053573",
+      "name": "Chocolate Amargo 70%",
+      "category": "Doces",
+      "price": 12.90,
+      "stock": 60,
+      "image": "https://santaluzia.vtexassets.com/arquivos/ids/996815/538639.jpg?v=638481877810530000",
+      "description": "Chocolate amargo 70% cacau, sem adição de açúcar",
+      "brand": "Lindt",
+      "comparePrice": 15.90,
+      "nutriscore": "C",
+      "ecoscore": "C",
+      "nutrition": {
+        "calories": 598,
+        "protein": 7.9,
+        "carbs": 31,
+        "fat": 42,
+        "fiber": 11
+      },
+      "isFeatured": false
+    }
+  ]
+}

@@ -169,7 +169,7 @@ export default function Cart() {
                     {/* Botão Checkout */}
                     <button
                         onClick={() => navigate('/checkout')}
-                        className="w-full flex items-center justify-center gap-2 bg-secondary text-white py-4 rounded-xl font-semibold hover:bg-secondary/90 transition"
+                        className="w-full flex items-center justify-center gap-2 bg-secondary text-red py-4 rounded-xl font-semibold hover:bg-secondary/90 transition"
                     >
                         Finalizar Compra
                         <ArrowRight className="w-5 h-5" />

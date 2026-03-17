@@ -1,15 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '../stores/cartStore';
-
-interface Product {
-    id: string;
-    name: string;
-    price: number;
-    comparePrice?: number;
-    images: string[];
-    category: { name: string };
-}
+import type { Product } from '../services/productService';
 
 interface ProductCardProps {
     product: Product;
@@ -26,8 +18,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             id: product.id,
             name: product.name,
             price: product.price,
-            image: product.images[0],
-            stock: 10, // virá do backend depois
+            image: product.image,
+            stock: product.stock,
         });
     };
 
@@ -41,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Imagem */}
                 <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     <img
-                        src={product.images[0] || 'https://placehold.co/400x400?text=Produto'}
+                        src={product.image}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
@@ -50,14 +42,22 @@ export default function ProductCard({ product }: ProductCardProps) {
                             -{discount}%
                         </span>
                     )}
+                    {product.nutriscore && (
+                        <span className="absolute top-2 right-2 bg-white/90 text-xs font-bold px-2 py-1 rounded">
+                            Nutri-Score {product.nutriscore}
+                        </span>
+                    )}
                 </div>
 
                 {/* Info */}
                 <div className="p-4">
-                    <p className="text-xs text-gray-500 mb-1">{product.category.name}</p>
-                    <h3 className="font-medium text-dark line-clamp-2 mb-2 group-hover:text-primary transition">
+                    <p className="text-xs text-gray-500 mb-1">{product.category}</p>
+                    <h3 className="font-medium text-dark line-clamp-2 mb-1 group-hover:text-primary transition">
                         {product.name}
                     </h3>
+                    {product.brand && (
+                        <p className="text-xs text-gray-400 mb-2">{product.brand}</p>
+                    )}
 
                     <div className="flex items-center gap-2 mb-3">
                         <span className="text-lg font-bold text-primary">
@@ -72,7 +72,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                     <button
                         onClick={handleAddToCart}
-                        className="w-full flex items-center justify-center gap-2 bg-primary/10 text-primary py-2 rounded-lg font-medium hover:bg-primary hover:text-white transition"
+                        className="w-full flex items-center justify-center gap-2 bg-primary/10 text-primary py-2 rounded-lg font-medium hover:bg-primary hover:text-red transition"
                     >
                         <ShoppingCart className="w-4 h-4" />
                         Adicionar

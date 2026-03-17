@@ -1,66 +1,205 @@
 import axios from 'axios';
 
-const fakeApi = axios.create({
-    baseURL: 'https://fakestoreapi.com',
-});
 
 export interface Product {
-    id: number;
-    title: string;
-    price: number;
-    description: string;
+    id: string;
+    name: string;
     category: string;
+    price: number;
+    stock: number;
     image: string;
-    rating: {
-        rate: number;
-        count: number;
+    description?: string;
+    brand?: string;
+    comparePrice?: number;
+    nutriscore?: string;
+    ecoscore?: string;
+    nutrition?: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+        fiber?: number;
     };
+    isFeatured?: boolean;
 }
 
+interface ProductsJSON {
+    products: Product[];
+}
+
+// Cache local
+let productsCache: Product[] | null = null;
+
 export const productService = {
-    getAll: async () => {
-        const { data } = await fakeApi.get<Product[]>('/products');
-        // Transformar para nosso formato
-        return data.map(p => ({
-            id: String(p.id),
-            name: p.title,
-            description: p.description,
-            price: p.price,
-            comparePrice: p.price * 1.2,
-            images: [p.image],
-            stock: Math.floor(Math.random() * 50) + 10,
-            sku: `PROD-${p.id}`,
-            category: {
-                id: p.category,
-                name: p.category.charAt(0).toUpperCase() + p.category.slice(1),
-                slug: p.category,
-            },
-            isFeatured: p.rating.rate > 4,
-        }));
+    // Carregar todos os produtos do JSON
+    loadProducts: async (): Promise<Product[]> => {
+        // Retornar cache se existir
+        if (productsCache) {
+            console.log('Usando cache de produtos:', productsCache.length);
+            return productsCache;
+        }
+
+        try {
+            console.log('Carregando produtos do JSON...');
+
+            const { data } = await axios.get<ProductsJSON>('/data/products.json');
+
+            // Verificar se data existe
+            if (!data) {
+                console.error('Resposta vazia do JSON');
+                return [];
+            }
+
+            // Verificar se products existe e é array
+            if (!data.products) {
+                console.error('Propriedade "products" não encontrada no JSON:', data);
+                return [];
+            }
+
+            if (!Array.isArray(data.products)) {
+                console.error('"products" não é um array:', typeof data.products);
+                return [];
+            }
+
+            // Validar cada produto
+            const validProducts = data.products.filter((p, index) => {
+                if (!p.id || !p.name || !p.price) {
+                    console.warn(`Produto inválido no índice ${index}:`, p);
+                    return false;
+                }
+                return true;
+            });
+
+            console.log('Produtos carregados:', validProducts.length);
+
+            // Salvar no cache
+            productsCache = validProducts;
+
+            return validProducts;
+
+        } catch (error: any) {
+            console.error('Erro ao carregar produtos:', error.message);
+
+            if (error.response) {
+                console.error('Status:', error.response.status);
+                console.error('Data:', error.response.data);
+            }
+
+            return [];
+        }
     },
 
-    getFeatured: async () => {
-        const products = await productService.getAll();
-        return products.filter(p => p.isFeatured).slice(0, 4);
+    // Forçar recarregar (ignorar cache)
+    reloadProducts: async (): Promise<Product[]> => {
+        productsCache = null;
+        return productService.loadProducts();
     },
 
-    getById: async (id: string) => {
-        const { data } = await fakeApi.get<Product>(`/products/${id}`);
-        return {
-            id: String(data.id),
-            name: data.title,
-            description: data.description,
-            price: data.price,
-            comparePrice: data.price * 1.2,
-            images: [data.image],
-            stock: Math.floor(Math.random() * 50) + 10,
-            sku: `PROD-${data.id}`,
-            category: {
-                id: data.category,
-                name: data.category.charAt(0).toUpperCase() + data.category.slice(1),
-                slug: data.category,
-            },
-            isFeatured: data.rating.rate > 4,
-        };
+    // Buscar todos (com filtros opcionais)
+    getAll: async (filters?: { category?: string; search?: string }): Promise<Product[]> => {
+        try {
+            let products = await productService.loadProducts();
+
+            // Se não carregou, retornar array vazio
+            if (!products || products.length === 0) {
+                console.warn('Nenhum produto carregado');
+                return [];
+            }
+
+            // Filtrar por categoria
+            if (filters?.category && filters.category !== 'all') {
+                const categorySlug = filters.category.toLowerCase();
+                products = products.filter(
+                    (p) => p.category?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug ||
+                        p.category?.toLowerCase() === categorySlug
+                );
+            }
+
+            // Filtrar por busca
+            if (filters?.search) {
+                const search = filters.search.toLowerCase();
+                products = products.filter(
+                    (p) =>
+                        p.name?.toLowerCase().includes(search) ||
+                        p.description?.toLowerCase().includes(search) ||
+                        p.brand?.toLowerCase().includes(search) ||
+                        p.category?.toLowerCase().includes(search)
+                );
+            }
+
+            return products;
+        } catch (error) {
+            console.error('Erro em getAll:', error);
+            return [];
+        }
+    },
+
+    // Produtos em destaque
+    getFeatured: async (): Promise<Product[]> => {
+        try {
+            const products = await productService.loadProducts();
+            return products.filter((p) => p.isFeatured === true);
+        } catch (error) {
+            console.error('Erro em getFeatured:', error);
+            return [];
+        }
+    },
+
+    // Buscar por ID
+    getById: async (id: string): Promise<Product | null> => {
+        try {
+            const products = await productService.loadProducts();
+            return products.find((p) => p.id === id) || null;
+        } catch (error) {
+            console.error('Erro em getById:', error);
+            return null;
+        }
+    },
+
+    // Buscar por categoria
+    getByCategory: async (category: string): Promise<Product[]> => {
+        try {
+            const products = await productService.loadProducts();
+            return products.filter(
+                (p) => p.category?.toLowerCase() === category.toLowerCase()
+            );
+        } catch (error) {
+            console.error('Erro em getByCategory:', error);
+            return [];
+        }
+    },
+
+    // Obter categorias únicas
+    getCategories: async () => {
+        try {
+            const products = await productService.loadProducts();
+
+            if (!products || products.length === 0) {
+                return [];
+            }
+
+            // Agrupar por categoria
+            const categoryMap = new Map<string, number>();
+
+            products.forEach((product) => {
+                if (product.category) {
+                    const count = categoryMap.get(product.category) || 0;
+                    categoryMap.set(product.category, count + 1);
+                }
+            });
+
+            // Transformar em array
+            const categories = Array.from(categoryMap.entries()).map(([name, count]) => ({
+                id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                name,
+                slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                count,
+            }));
+
+            return categories.sort((a, b) => a.name.localeCompare(b.name));
+        } catch (error) {
+            console.error('Erro em getCategories:', error);
+            return [];
+        }
     },
 };
